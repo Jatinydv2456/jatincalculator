@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Calculator</title>
+<style>
+:root {
+  --bg:#eef1fa; --panel:#fff; --screen:#f4f6fc;
+  --text:#20243a; --muted:#747c94; --key:#e9edf7;
+  --accent:#7563f6; --special:#dfe3f1;
+}
+body.dark {
+  --bg:#111522; --panel:#1c2232; --screen:#111725;
+  --text:#f6f7ff; --muted:#a3acc3; --key:#2a3246;
+  --accent:#8170ff; --special:#374057;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:22px 12px; min-height:100vh;
+  display:flex; justify-content:center; align-items:center;
+  background:var(--bg); color:var(--text);
+  font-family:Arial,sans-serif; transition:.2s;
+}
+.app { width:100%; max-width:390px; }
+.top {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:16px;
+}
+h2 { margin:0; font-size:23px; }
+.sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.actions { display:flex; gap:7px; }
+.small {
+  border:0; border-radius:10px; padding:10px;
+  background:var(--special); color:var(--text);
+  cursor:pointer;
+}
+.panel {
+  padding:17px; border-radius:25px;
+  background:var(--panel);
+  box-shadow:0 12px 38px #00000012;
+}
+.screen {
+  background:var(--screen); border-radius:17px;
+  padding:17px 12px; text-align:right;
+  min-height:112px; display:flex;
+  flex-direction:column; justify-content:flex-end;
+  overflow:hidden; margin-bottom:14px;
+}
+#expression {
+  color:var(--muted); min-height:22px;
+  overflow-wrap:anywhere; font-size:15px;
+}
+#result {
+  font-size:clamp(26px,8vw,36px);
+  font-weight:bold; margin-top:9px;
+  overflow-wrap:anywhere;
+}
+.scientific {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:8px; margin-bottom:10px;
+}
+.keys {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+button.key {
+  min-width:0; min-height:53px; padding:8px 2px;
+  border:0; border-radius:13px;
+  background:var(--key); color:var(--text);
+  font-size:18px; cursor:pointer;
+  transition:filter .15s, transform .1s;
+}
+button.key:active { transform:scale(.95); }
+button.key:hover { filter:brightness(.94); }
+button.op { background:var(--special); }
+button.eq { background:var(--accent); color:white; }
+button.danger { color:#e75d76; }
+.section-title {
+  font-size:12px; color:var(--muted);
+  margin:2px 0 9px;
+}
+.history {
+  margin-top:14px; padding:14px;
+  border-radius:18px; background:var(--panel);
+}
+.history-head {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:10px;
+}
+.history-head strong { font-size:15px; }
+#historyList { max-height:145px; overflow:auto; }
+.history-item {
+  display:flex; justify-content:space-between;
+  gap:10px; padding:9px 2px;
+  border-bottom:1px solid var(--key);
+  cursor:pointer; font-size:13px;
+}
+.history-item span:first-child {
+  color:var(--muted); overflow-wrap:anywhere;
+}
+.empty { font-size:13px; color:var(--muted); }
+.note {
+  text-align:center; color:var(--muted);
+  font-size:11px; margin-top:14px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div>
+      <h2>Smart Calculator</h2>
+      <div class="sub">Every calculation, made simple.</div>
+    </div>
+    <div class="actions">
+      <button class="small" id="historyToggle" title="History">📜</button>
+      <button class="small" id="themeToggle" title="Change theme">🌙</button>
+    </div>
+  </div>
+
+  <main class="panel">
+    <div class="screen">
+      <div id="expression">Ready to calculate</div>
+      <div id="result">0</div>
+    </div>
+    
+<button class="small" id="layoutToggle"
+  style="width:100%; margin-bottom:12px;">
+  🧪 Scientific Mode
+</button>
+
+
+    <div class="section-title">SCIENTIFIC FUNCTIONS · TRIG IN DEGREES</div>
+    <div class="scientific">
+      <button class="key op" data-insert="sin(">sin</button>
+      <button class="key op" data-insert="cos(">cos</button>
+      <button class="key op" data-insert="tan(">tan</button>
+      <button class="key op" data-insert="sqrt(">√</button>
+      <button class="key op" data-insert="log(">log</button>
+      <button class="key op" data-insert="ln(">ln</button>
+      <button class="key op" data-insert="^2">x²</button>
+      <button class="key op" data-insert="^">xʸ</button>
+      <button class="key op" data-insert="π">π</button>
+      <button class="key op" data-insert="(">(</button>
+      <button class="key op" data-insert=")">)</button>
+      <button class="key op" data-insert="/">÷</button>
+    </div>
+
+    <div class="keys">
+      <button class="key danger" data-action="clear">AC</button>
+      <button class="key" data-action="delete">DEL</button>
+      <button class="key op" data-insert="%">%</button>
+      <button class="key op" data-insert="*">×</button>
+
+      <button class="key" data-insert="7">7</button>
+      <button class="key" data-insert="8">8</button>
+      <button class="key" data-insert="9">9</button>
+      <button class="key op" data-insert="-">−</button>
+
+      <button class="key" data-insert="4">4</button>
+      <button class="key" data-insert="5">5</button>
+      <button class="key" data-insert="6">6</button>
+      <button class="key op" data-insert="+">+</button>
+
+      <button class="key" data-insert="1">1</button>
+      <button class="key" data-insert="2">2</button>
+      <button class="key" data-insert="3">3</button>
+      <button class="key" data-action="equals"
+        style="grid-row:span 2" > = </button>
+
+      <button class="key" data-action="sign">±</button>
+      <button class="key" data-insert="0">0</button>
+      <button class="key" data-insert=".">.</button>
+    </div>
+  </main>
+
+  <section class="history" id="historyPanel" hidden>
+    <div class="history-head">
+      <strong>Calculation History</strong>
+      <button class="small" id="clearHistory">Clear</button>
+    </div>
+    <div id="historyList">
+      <div class="empty">Your calculations will appear here.</div>
+    </div>
+  </section>
+
+  <div class="note">
+    Keyboard supported · History saved on this device
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const exprDisplay = $("expression");
+const resultDisplay = $("result");
+
+let input = "";
+let finished = false;
+let history = [];
+
+try {
+  history = JSON.parse(localStorage.getItem("calcHistory") || "[]");
+  if (!Array.isArray(history)) history = [];
+} catch { history = []; }
+
+function normalize(s) {
+  return s.replace(/π/g, "pi").replace(/×/g, "*");
+}
+
+// Evaluate only mathematical expressions and approved functions.
+function calculate(s) {
+  if (!s.trim()) return null;
+
+  let e = normalize(s);
+
+  // Support percentages such as 50% as 0.5.
+  e = e.replace(
+    /(\d+(?:\.\d+)?)%/g,
+    "($1/100)"
+  );
+
+  // Convert calculator power syntax to JavaScript power.
+  e = e.replace(/\^/g, "**");
+
+  const names = ["sin","cos","tan","sqrt","log","ln","pi"];
+  const tokens = e.match(/[A-Za-z_]\w*/g) || [];
+  if (tokens.some(t => !names.includes(t))) return null;
+
+  if (!/^[0-9+\-*/().\s%a-zA-Z_]+$/.test(e)) return null;
+
+  const sin = x => Math.sin(x * Math.PI / 180);
+  const cos = x => Math.cos(x * Math.PI / 180);
+  const tan = x => Math.tan(x * Math.PI / 180);
+  const sqrt = Math.sqrt;
+  const log = Math.log10;
+  const ln = Math.log;
+  const pi = Math.PI;
+
+  try {
+    const n = Function(
+      "sin","cos","tan","sqrt","log","ln","pi",
+      '"use strict"; return (' + e + ');'
+    )(sin,cos,tan,sqrt,log,ln,pi);
+
+    if (typeof n !== "number" || !Number.isFinite(n)) return null;
+    return Number(n.toPrecision(10));
+  } catch {
+    return null;
+  }
+}
+const layoutToggle = document.getElementById("layoutToggle");
+const scientificSection = document.querySelector(".scientific");
+const sectionTitle = document.querySelector(".section-title");
+
+let scientificMode = true;
+
+function changeLayout() {
+  scientificMode = !scientificMode;
+
+  // Scientific buttons aur unka heading show/hide karo
+  scientificSection.hidden = !scientificMode;
+  sectionTitle.hidden = !scientificMode;
+
+  // Button ka label update karo
+  layoutToggle.textContent = scientificMode
+    ? "🔢 Numerical Mode"
+    : "🧪 Scientific Mode";
+}
+
+layoutToggle.addEventListener("click", changeLayout);
+
+// Default layout: numerical calculator
+scientificMode = true;
+changeLayout();
+
+function update() {
+  exprDisplay.textContent = input || "Ready to calculate";
+
+  if (!input) {
+    resultDisplay.textContent = "0";
+    return;
+  }
+
+  if (finished) {
+    resultDisplay.textContent = input;
+    return;
+  }
+
+  const answer = calculate(input);
+  resultDisplay.textContent =
+    answer === null ? "…" : String(answer);
+}
+
+function saveHistory(expression, answer) {
+  history.unshift({ expression, answer });
+  history = history.slice(0, 50);
+
+  try {
+    localStorage.setItem("calcHistory", JSON.stringify(history));
+  } catch {}
+
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = $("historyList");
+  list.replaceChildren();
+
+  if (!history.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "Your calculations will appear here.";
+    list.appendChild(empty);
+    return;
+  }
+
+  history.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "history-item";
+
+    const left = document.createElement("span");
+    left.textContent = item.expression;
+
+    const right = document.createElement("strong");
+    right.textContent = "= " + item.answer;
+
+    row.append(left, right);
+    row.addEventListener("click", () => {
+      input = String(item.answer);
+      finished = true;
+      update();
+    });
+    list.appendChild(row);
+  });
+}
+
+function insert(value) {
+  if (finished && /[0-9.π]/.test(value)) input = "";
+  input += value;
+  finished = false;
+  update();
+}
+
+function equals() {
+  const answer = calculate(input);
+  if (answer === null) {
+    resultDisplay.textContent = "Invalid expression";
+    return;
+  }
+
+  saveHistory(input, answer);
+  input = String(answer);
+  finished = true;
+  update();
+}
+
+document.querySelector(".app").addEventListener("click", event => {
+  const b = event.target.closest("button");
+  if (!b) return;
+
+  if (b.dataset.insert !== undefined) {
+    insert(b.dataset.insert);
+    return;
+  }
+
+  switch (b.dataset.action) {
+    case "clear":
+      input = "";
+      finished = false;
+      update();
+      break;
+    case "delete":
+      input = input.slice(0, -1);
+      finished = false;
+      update();
+      break;
+    case "sign":
+      input = input.startsWith("-") ? input.slice(1) : "-" + input;
+      finished = false;
+      update();
+      break;
+    case "equals":
+      equals();
+      break;
+  }
+});
+
+$("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  const dark = document.body.classList.contains("dark");
+  $("themeToggle").textContent = dark ? "☀️" : "🌙";
+  try {
+    localStorage.setItem("calcTheme", dark ? "dark" : "light");
+  } catch {}
+});
+
+try {
+  if (localStorage.getItem("calcTheme") === "dark") {
+    document.body.classList.add("dark");
+    $("themeToggle").textContent = "☀️";
+  }
+} catch {}
+
+$("historyToggle").addEventListener("click", () => {
+  $("historyPanel").hidden = !$("historyPanel").hidden;
+});
+
+$("clearHistory").addEventListener("click", () => {
+  history = [];
+  try { localStorage.removeItem("calcHistory"); } catch {}
+  renderHistory();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+  if (/^[0-9.]$/.test(event.key)) {
+    insert(event.key);
+  } else if (["+", "-", "*", "/", "(", ")", "%", "^"].includes(event.key)) {
+    insert(event.key);
+  } else if (event.key === "Enter" || event.key === "=") {
+    event.preventDefault();
+    equals();
+  } else if (event.key === "Backspace") {
+    input = input.slice(0, -1);
+    finished = false;
+    update();
+  } else if (event.key === "Escape") {
+    input = "";
+    finished = false;
+    update();
+  }
+});
+
+renderHistory();
+update();
+</script>
+</body>
+</html>

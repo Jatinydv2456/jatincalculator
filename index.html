@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101214">
-<title>Titanium Pro — Smart Calculator</title>
+<title>CALC-X Smart Calculator</title>
 <style>
 :root {
   color-scheme: dark;
@@ -179,7 +179,7 @@ canvas { width: 100%; height: 100%; display: block; }
 <body>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="logo">CX</div><div><h1>CALC-X</h1><p>PRECISION • REDEFINED</p></div></div>
+  <div class="brand"><div class="logo">CX</div><div><h1>CALC-X</h1><p>•PRECISION $ REDEFINED</p></div></div>
   <div class="top-actions">
     <button class="btn" id="themeBtn" aria-label="Toggle theme">☼ Theme</button>
     <button class="btn" id="voiceBtn" title="Speak a calculation">🎙 Voice</button>
@@ -197,21 +197,10 @@ canvas { width: 100%; height: 100%; display: block; }
     <button class="navbtn" data-section="currency">◎ Currency</button>
     <button class="navbtn" data-section="history">◷ History & Memory</button>
   </nav>
-  <div class="side-note">TITANIUM ENGINE v2.0<br>Built for everyday precision.</div>
+  <div class="side-note">CALC-X ENGINE v2.0<br>Built for everyday precision.</div>
 </aside>
 
 <main>
-<section class="hero">
-  <div><div class="eyebrow">PERSONAL COMPUTING SUITE</div><h2>Your numbers. Under control.</h2><p class="sub">A refined workspace for calculations, conversions and insights.</p></div>
-  <span class="pill">● SYSTEM READY</span>
-</section>
-
-<div class="stats">
-  <div class="stat"><div class="label">SESSION CALCULATIONS</div><div class="value" id="statCount">0</div><div class="hint">This session</div></div>
-  <div class="stat"><div class="label">SAVED FAVORITES</div><div class="value" id="statFav">0</div><div class="hint">Quick access</div></div>
-  <div class="stat"><div class="label">MEMORY REGISTER</div><div class="value" id="statMem">0</div><div class="hint">Stored value</div></div>
-</div>
-
 <section id="calculator" class="section active">
 <div class="workspace">
 <article class="panel">
@@ -224,7 +213,7 @@ canvas { width: 100%; height: 100%; display: block; }
   <div class="display">
     <input id="expr" class="expression" aria-label="Calculation expression" autocomplete="off" spellcheck="false" placeholder="Enter expression…" value="">
     <div id="result" class="result" aria-live="polite">0</div>
-    <div class="display-bottom"><span id="calcStatus">Ready to calculate</span><span>Ti / ENGINE</span></div>
+    <div class="display-bottom"><span id="calcStatus">Ready to calculate</span><span>Cx / ENGINE</span></div>
   </div>
   <div class="scientific" id="scientificKeys">
     <button class="key sci" data-insert="sin(">sin</button><button class="key sci" data-insert="cos(">cos</button><button class="key sci" data-insert="tan(">tan</button><button class="key sci" data-insert="sqrt(">√</button>
@@ -243,7 +232,11 @@ canvas { width: 100%; height: 100%; display: block; }
     <button class="smallbtn" id="favBtn">☆ Save</button>
   </div>
 </article>
-
+<div class="stats">
+  <div class="stat"><div class="label">SESSION CALCULATIONS</div><div class="value" id="statCount">0</div><div class="hint">This session</div></div>
+  <div class="stat"><div class="label">SAVED FAVORITES</div><div class="value" id="statFav">0</div><div class="hint">Quick access</div></div>
+  <div class="stat"><div class="label">MEMORY REGISTER</div><div class="value" id="statMem">0</div><div class="hint">Stored value</div></div>
+</div>
 <article class="panel">
   <div class="panel-head"><h3>Recent activity</h3><button class="smallbtn" id="viewHistory">View all →</button></div>
   <div class="list" id="recentList"><div class="empty">Your calculations will appear here.</div></div>
@@ -320,7 +313,7 @@ canvas { width: 100%; height: 100%; display: block; }
 </div>
 </section>
 
-<footer class="footer">TITANIUM PRO • PRECISION IN EVERY DETAIL</footer>
+<footer class="footer">CALC-X • PRECISION IN EVERY DETAIL</footer>
 </main>
 </div>
 </div>

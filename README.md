@@ -1,1 +1,1 @@
-# jatincalculator
+# CALC-X
